@@ -36,5 +36,6 @@ module.exports = {
                 "varsIgnorePattern": "^_"
             }
         ],
+        'semi': ['error'],
     }
-}
+};
