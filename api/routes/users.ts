@@ -1,5 +1,5 @@
-import express from "express";
-import User from "../models/User";
+import express from 'express';
+import User from '../models/User';
 import mongoose from 'mongoose';
 
 const usersRouter = express.Router();
@@ -25,21 +25,21 @@ usersRouter.post('/', async (req, res, next) => {
 
 usersRouter.post('/sessions', async (req, res, next) => {
   try {
-    const user = await User.findOne({username: req.body.username});
+    const user = await User.findOne({ username: req.body.username });
     if (!user) {
-      return res.status(422).send({error: 'Username not found!'});
+      return res.status(422).send({ error: 'Username not found!' });
     }
 
     const isMatch = await user.checkPassword(req.body.password);
 
     if (!isMatch) {
-      return res.status(422).send({error: 'password is wrong!'});
+      return res.status(422).send({ error: 'password is wrong!' });
     }
 
     user.generateToken();
     await user.save();
 
-    return res.send({message: 'Username and password are correct!', user});
+    return res.send({ message: 'Username and password are correct!', user });
   } catch (error) {
     return next(error);
   }

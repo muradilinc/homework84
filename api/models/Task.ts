@@ -23,7 +23,10 @@ const taskSchema = new Schema({
   description: String,
   status: {
     type: String,
-    enum: ['new', 'in_progress', 'complete'],
+    enum: {
+      values: ['new', 'in_progress', 'complete'],
+      message: 'Status must be one of: new, in_progress, complete',
+    },
     default: 'new',
   },
 });

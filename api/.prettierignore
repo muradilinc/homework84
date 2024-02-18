@@ -1,0 +1,8 @@
+.eslintrc.js
+.prettierrc
+package-lock.json
+package.json
+tsconfig.json
+nodemon.json
+node_modules
+.git
