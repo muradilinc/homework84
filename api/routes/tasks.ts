@@ -34,10 +34,13 @@ tasksRouter.get('/', auth, async (req, res, next) => {
   }
 });
 
-tasksRouter.put('/:id', auth, async (req, res, next) => {
+tasksRouter.put('/:id', auth, async (req: RequestWithUser, res, next) => {
   try {
-    const task = await Task.findByIdAndUpdate(
-      { _id: req.params.id },
+    const result = await Task.findOneAndUpdate(
+      {
+        _id: req.params.id,
+        user: req.user?._id,
+      },
       {
         title: req.body.title,
         description: req.body.title,
@@ -45,7 +48,12 @@ tasksRouter.put('/:id', auth, async (req, res, next) => {
       },
       { runValidators: true },
     );
-    return res.send(task);
+
+    if (!result) {
+      return res.status(403).json({ error: 'Доступ запрещен', status: 403 });
+    }
+
+    return res.send(result);
   } catch (error) {
     if (error instanceof mongoose.Error.ValidationError) {
       return res.status(400).send({ error: error.message });
@@ -54,13 +62,16 @@ tasksRouter.put('/:id', auth, async (req, res, next) => {
   }
 });
 
-tasksRouter.delete('/:id', auth, async (req, res, next) => {
+tasksRouter.delete('/:id', auth, async (req: RequestWithUser, res, next) => {
   try {
-    const result = await Task.findByIdAndDelete(req.params.id);
+    const result = await Task.findOneAndDelete({
+      _id: req.params.id,
+      user: req.user?._id,
+    });
     if (result) {
       return res.send('deleted ' + result._id);
     } else {
-      return res.status(404).send('Task not found');
+      return res.status(403).json({ error: 'Доступ запрещен', status: 403 });
     }
   } catch (error) {
     return next(error);
